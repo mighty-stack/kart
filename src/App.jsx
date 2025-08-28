@@ -1,14 +1,23 @@
 import React from 'react'
-import Navbar from './components/Navbar'
-import Banner from './components/Banner'
+import { Route, Routes } from 'react-router-dom'
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
+import Signin from './pages/Signin'
+import Signup from './pages/Signup'
+import About from './pages/About'
 
 const App = () => {
-  return (
-    <div>
-      <h1>App</h1>
-      <Navbar />
-      <Banner />
-    </div>
+
+  return(
+    <> 
+      <Routes>
+       <Route path="/" element={<Home/>}/>
+       <Route path="/about" element={<About/>}/>
+       <Route path="/Sigin" element={<Signin/>}/>
+       <Route path="/Signup" element={<Signup/>}/>
+       <Route path="*" element={<NotFound/>}/>
+     </Routes>
+    </>
   )
 }
 
