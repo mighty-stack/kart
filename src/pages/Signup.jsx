@@ -29,22 +29,83 @@ password: yup.string()
    console.log(formik.errors)
 
   return (
-    <div>
-      <form action="" onSubmit={formik.handleSubmit}>
-        <input type="text" placeholder="First Name" name="firstname" id="firstName" onChange={formik.handleChange} onBlur={formik.handleBlur} />
-        <small className='text-danger'>{formik.touched.firstname && formik.errors.firstname }</small> <br />
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6 col-lg-5">
+          <div className="card shadow">
+            <div className="card-body">
+              <h3 className="card-title mb-4 text-center">Sign Up</h3>
+              <form onSubmit={formik.handleSubmit}>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className={`form-control ${formik.touched.firstname && formik.errors.firstname ? 'is-invalid' : ''}`}
+                    placeholder="First Name"
+                    name="firstname"
+                    id="firstName"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  <small className='text-danger'>
+                    {formik.touched.firstname && formik.errors.firstname}
+                  </small>
+                </div>
 
-        <input type="text" placeholder="Last Name" name="" id="lastName" onChange={formik.handleChange} onBlur={formik.handleBlur}/>
-        <small className='text-danger'>{formik.touched.lastname && formik.errors.lastname}</small> <br />
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    className={`form-control ${formik.touched.lastname && formik.errors.lastname ? 'is-invalid' : ''}`}
+                    placeholder="Last Name"
+                    name="lastname"
+                    id="lastName"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  <small className='text-danger'>
+                    {formik.touched.lastname && formik.errors.lastname}
+                  </small>
+                </div>
 
-        <input type="text" placeholder="Email" name="email" id="email" onChange={formik.handleChange} onBlur={formik.handleBlur}/>
-        <small className='text-danger'>{formik.touched.email && formik.errors.email }</small> <br />
+                <div className="mb-3">
+                  <input
+                    type="email"
+                    className={`form-control ${formik.touched.email && formik.errors.email ? 'is-invalid' : ''}`}
+                    placeholder="Email"
+                    name="email"
+                    id="email"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  <small className='text-danger'>
+                    {formik.touched.email && formik.errors.email}
+                  </small>
+                </div>
 
-        <input type="text" placeholder="Password" name="password" id="password" onChange={formik.handleChange} onBlur={formik.handleBlur}/>
-        <small className='text-danger'>{formik.touched.password && formik.errors.password }</small> <br />
+                <div className="mb-3">
+                  <input
+                    type="password"
+                    className={`form-control ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
+                    placeholder="Password"
+                    name="password"
+                    id="password"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                  />
+                  <small className='text-danger'>
+                    {formik.touched.password && formik.errors.password}
+                  </small>
+                </div>
 
-        <button type="submit">SignUp</button>
-      </form>
+                <div className="d-grid">
+                  <button type="submit" className="btn btn-primary">
+                    Sign Up
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
