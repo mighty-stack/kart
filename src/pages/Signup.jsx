@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Formik, useFormik } from 'formik'
 import * as yup from 'yup'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
 
 const Signup = () => {
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
+
   let formik = useFormik({
     initialValues:{
       firstname: "",
@@ -10,20 +17,33 @@ const Signup = () => {
       email: "",
       password: "",
     },
-    onSubmit:(values)=>{
-      console.log(values)
+    onSubmit:(values) => {
+      setError('');
+      setLoading(true);
+      axios.post('http://localhost:3001/user/signin', values)
+        .then(res => {
+          // Handle successful signup (e.g., redirect or show message)
+           navigate('/dashboard')
+        })
+        .catch(err => {
+          if (err.response && err.response.data && err.response.data.message) {
+            setError(err.response.data.message);
+          } else {
+            setError('Signup failed');
+          }
+        })
+        .finally(() => setLoading(false));
     },
-    
     validationSchema: yup.object ({
       firstname:yup.string().required("This field is required"),
       lastname:yup.string().required("This field is required"),
       email:yup.string().email("Invalid email").required("This field is required"),
-password: yup.string()
-  .required("This field is required")
-  .matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._#^-])[A-Za-z\d@$!%*?&._#^-]{8,}$/,
-    "Password must be at least 8 characters, include uppercase, lowercase, number, and special character"
-  ),
+      password: yup.string()
+        .required("This field is required")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._#^-])[A-Za-z\d@$!%*?&._#^-]{8,}$/,
+          "Password must be at least 8 characters, include uppercase, lowercase, number, and special character"
+        ),
     })
   })
    console.log(formik.errors)
@@ -95,10 +115,10 @@ password: yup.string()
                     {formik.touched.password && formik.errors.password}
                   </small>
                 </div>
-
+                {error && <div className="alert alert-danger py-2">{error}</div>}
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-primary">
-                    Sign Up
+                  <button type="submit" className="btn btn-primary" disabled={loading}>
+                    {loading ? 'Signing up...' : 'Sign Up'}
                   </button>
                 </div>
               </form>

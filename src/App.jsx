@@ -9,6 +9,10 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import CategoryPage from './pages/CategoryPage'; // create this page if not present
 import Cart from './pages/Cart';
+import Dashboard from './pages/Dashboard';
+import Checkout from './pages/Checkout';
+
+const token = localStorage.getItem('token');
 
 const App = () => {
 
@@ -24,10 +28,12 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Home/>}/>
                 <Route path="/about" element={<About/>}/>
-                <Route path="/Sigin" element={<Signin/>}/>
-                <Route path="/Signup" element={<Signup/>}/>
+                <Route path="/signin" element={<Signin />} />
+                <Route path="/signup" element={<Signup/>}/>
                 <Route path="/category/:categoryName" element={<CategoryPage />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/dashboard" element={ token ? <Dashboard token={token}/> : <Signin/> } />
+                <Route path="/checkout" element={<Checkout />} />
                 <Route path="*" element={<NotFound/>}/>
               </Routes>
             </div>

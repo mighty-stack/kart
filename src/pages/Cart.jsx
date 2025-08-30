@@ -1,10 +1,12 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { removeFromCart, updateQuantity, clearCart } from '../redux/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const items = useSelector(state => state.cart.items);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleQuantityChange = (id, value) => {
     const quantity = parseInt(value, 10);
@@ -61,9 +63,17 @@ const Cart = () => {
           </table>
           <div className="d-flex justify-content-between align-items-center">
             <h4>Total: ₦{total}</h4>
-            <button className="btn btn-outline-danger" onClick={() => dispatch(clearCart())}>
-              Clear Cart
-            </button>
+            <div>
+              <button className="btn btn-outline-danger me-2" onClick={() => dispatch(clearCart())}>
+                Clear Cart
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => navigate('/checkout')}
+              >
+                Checkout
+              </button>
+            </div>
           </div>
         </>
       )}

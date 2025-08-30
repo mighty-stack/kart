@@ -1,8 +1,29 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../redux/cartSlice'
 
-const Button = () => {
+const Button = ({ product }) => {
+  const dispatch = useDispatch();
+
+  const addToCartButton = () => {
+    if (product) {
+      dispatch(addToCart({ 
+        id: product.id, 
+        name: product.name, 
+        price: product.price, 
+        quantity: 1 
+      }));
+    }
+  };
+
   return (
-    <div>Button</div>
+    <button 
+      className="btn btn-success"
+      onClick={addToCartButton}
+      disabled={!product}
+    >
+      Add to Cart
+    </button>
   )
 }
 

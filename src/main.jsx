@@ -6,11 +6,13 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import counterSlice from './redux/counterSlice.js'
+import cartReducer from './redux/cartSlice.js'
 
 
 export const store = configureStore({
   reducer: {
     counter: counterSlice,
+    cart: cartReducer
   },
 })
 
