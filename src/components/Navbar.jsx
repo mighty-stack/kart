@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
 
 const Navbar = () => {
   const dropdownRef = useRef(null);
+  const [navOpen, setNavOpen] = useState(false);
 
   // Toggle dropdown manually for React (Bootstrap JS is not automatic in React)
   const handleDropdown = (e) => {
@@ -25,22 +26,39 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
+  // Toggle navbar collapse on small screens
+  const handleNavToggle = () => {
+    setNavOpen((prev) => !prev);
+  };
+
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
       <div className="container">
-      
+        {/* Left: Brand and Nav links */}
         <Link className="navbar-brand fw-bold" to="/">Kart</Link>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+        <button
+          className="navbar-toggler"
+          type="button"
+          aria-controls="navbarMain"
+          aria-expanded={navOpen}
+          aria-label="Toggle navigation"
+          onClick={handleNavToggle}
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarMain">
-
-          
+        <div className={`collapse navbar-collapse${navOpen ? ' show' : ''}`} id="navbarMain">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/">Home</NavLink>
+            </li>
+            {/* ...existing code for more links... */}
+          </ul>
+          {/* Center: Search */}
           <form className="d-flex mx-auto" style={{ maxWidth: 400, width: '100%' }}>
             <input className="form-control me-2" type="search" placeholder="Search products..." aria-label="Search" />
             <button className="btn btn-outline-primary" type="submit">Search</button>
           </form>
-          
+          {/* Right: Account dropdown and Cart */}
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
             <li className="nav-item dropdown">
               <a

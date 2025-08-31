@@ -69,8 +69,7 @@ const Cart = () => {
               </button>
               <button
                 className="btn btn-primary"
-                onClick={() => navigate('/checkout')}
-              >
+                onClick={() => navigate('/checkout')}>
                 Checkout
               </button>
             </div>

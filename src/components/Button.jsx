@@ -18,10 +18,11 @@ const Button = ({ product }) => {
 
   return (
     <button 
-      className="btn btn-success"
+      className="btn btn-success w-100 mt-2"
       onClick={addToCartButton}
       disabled={!product}
     >
+      <i className="bi bi-cart-plus me-2"></i>
       Add to Cart
     </button>
   )

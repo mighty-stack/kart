@@ -49,17 +49,17 @@ const Signup = () => {
    console.log(formik.errors)
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-5">
       <div className="row justify-content-center">
-        <div className="col-md-6 col-lg-5">
-          <div className="card shadow">
-            <div className="card-body">
-              <h3 className="card-title mb-4 text-center">Sign Up</h3>
+        <div className="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
+          <div className="card shadow border-0">
+            <div className="card-body p-4">
+              <h3 className="card-title mb-4 text-center fw-bold">Sign Up</h3>
               <form onSubmit={formik.handleSubmit}>
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control ${formik.touched.firstname && formik.errors.firstname ? 'is-invalid' : ''}`}
+                    className={`form-control py-2 ${formik.touched.firstname && formik.errors.firstname ? 'is-invalid' : ''}`}
                     placeholder="First Name"
                     name="firstname"
                     id="firstName"
@@ -74,7 +74,7 @@ const Signup = () => {
                 <div className="mb-3">
                   <input
                     type="text"
-                    className={`form-control ${formik.touched.lastname && formik.errors.lastname ? 'is-invalid' : ''}`}
+                    className={`form-control py-2 ${formik.touched.lastname && formik.errors.lastname ? 'is-invalid' : ''}`}
                     placeholder="Last Name"
                     name="lastname"
                     id="lastName"
@@ -89,7 +89,7 @@ const Signup = () => {
                 <div className="mb-3">
                   <input
                     type="email"
-                    className={`form-control ${formik.touched.email && formik.errors.email ? 'is-invalid' : ''}`}
+                    className={`form-control py-2 ${formik.touched.email && formik.errors.email ? 'is-invalid' : ''}`}
                     placeholder="Email"
                     name="email"
                     id="email"
@@ -104,7 +104,7 @@ const Signup = () => {
                 <div className="mb-3">
                   <input
                     type="password"
-                    className={`form-control ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
+                    className={`form-control py-2 ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
                     placeholder="Password"
                     name="password"
                     id="password"
@@ -115,9 +115,9 @@ const Signup = () => {
                     {formik.touched.password && formik.errors.password}
                   </small>
                 </div>
-                {error && <div className="alert alert-danger py-2">{error}</div>}
-                <div className="d-grid">
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
+                {error && <div className="alert alert-danger py-2 mb-3">{error}</div>}
+                <div className="d-grid gap-2">
+                  <button type="submit" className="btn btn-primary py-2" disabled={loading}>
                     {loading ? 'Signing up...' : 'Sign Up'}
                   </button>
                 </div>

@@ -11,6 +11,7 @@ import CategoryPage from './pages/CategoryPage'; // create this page if not pres
 import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
 import Checkout from './pages/Checkout';
+import ProductDescriptionPage from './pages/ProductDescriptionPage';
 
 const token = localStorage.getItem('token');
 
@@ -34,6 +35,7 @@ const App = () => {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/dashboard" element={ token ? <Dashboard token={token}/> : <Signin/> } />
                 <Route path="/checkout" element={<Checkout />} />
+                <Route path="/product/:productId" element={<ProductDescriptionPage />} />
                 <Route path="*" element={<NotFound/>}/>
               </Routes>
             </div>

@@ -1,23 +1,16 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-const categories = [
-  "Supermarket",
-  "Health & Beauty",
-  "Home & Office",
-  "Phones & Tablets",
-  "Computing",
-  "Electronics",
-  "Fashion",
-  "Baby Products",
-  "Gaming",
-  "Sporting Goods",
-  "Automobile",
-  "Other Categories"
-];
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios"
 
 const Sidebar = () => {
+  const [categories, setCategories] = useState([]);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    axios("https://kart-backend.onrender.com/products/categories")
+      .then((res) => setCategories(res.data))
+      .catch((err) => console.error("Error fetching categories:", err));
+  }, []);
 
   return (
     <>
@@ -34,9 +27,11 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`bg-white border rounded p-3 sidebar-custom ${open ? 'd-block' : 'd-none'} d-md-block`}
+        className={`bg-white border rounded p-3 sidebar-custom ${
+          open ? "d-block" : "d-none"
+        } d-md-block`}
         id="sidebarCollapse"
-        style={{ minWidth: '220px', maxWidth: '100%', transition: 'all 0.3s' }}
+        style={{ minWidth: "220px", maxWidth: "100%", transition: "all 0.3s" }}
       >
         <h5 className="mb-3">Categories</h5>
         <ul className="list-group list-group-flush">
@@ -44,12 +39,10 @@ const Sidebar = () => {
             <li
               key={idx}
               className="list-group-item list-group-item-action sidebar-item p-0"
-              style={{ cursor: 'pointer', transition: 'background 0.2s' }}
             >
               <Link
-                to={`/category/${encodeURIComponent(cat.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-'))}`}
+                to={`/category/${encodeURIComponent(cat)}`}
                 className="d-block py-2 px-3 text-decoration-none text-dark"
-                style={{ width: '100%' }}
               >
                 {cat}
               </Link>
@@ -57,23 +50,6 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-      {/* Sidebar custom styles */}
-      <style>{`
-        .sidebar-item:hover, .sidebar-item:focus, .sidebar-item .active {
-          background: #f8f9fa;
-          color: #0d6efd;
-        }
-        @media (max-width: 767.98px) {
-          .sidebar-custom {
-            position: absolute;
-            z-index: 1050;
-            width: 80vw;
-            left: 0;
-            top: 60px;
-            box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15);
-          }
-        }
-      `}</style>
     </>
   );
 };
