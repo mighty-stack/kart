@@ -18,19 +18,22 @@ const Signin = () => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    axios.post('https://kart-backend.onrender.com/user/signin', form)
+    axios.post('http://localhost:3001/user/signin', form)
       .then(res => {
-        let token = res.data.token
-        localStorage.setItem('token',token)
-        if(token){
+        if(res.data.success){
+            let token = res.data.token
+         localStorage.setItem('token',token)
+
+         if(token){
+          console.log('Signin successful, token stored.');
           navigate('/dashboard')
         }
-        // Handle successful signin (e.g., save token, redirect)
-        // 
-      console.log(token)
-      })
-      .catch(err => {
-        if (err.response && err.response.data && err.response.data.message) {
+      }else{
+        setError(res.data.message || 'Signin failed')
+      }
+    })
+    .catch(err => {
+      if (err.response && err.response.data && err.response.data.message) {
           setError(err.response.data.message);
         } else if (err.response && err.response.status === 404) {
           setError('Signin endpoint not found. Please check your backend route.');

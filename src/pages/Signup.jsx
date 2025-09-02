@@ -177,12 +177,12 @@ const Signup = () => {
       password: '',
     },
     validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       setServerError('');
       setLoading(true);
       try {
-        const res = await axios.post(
-          'https://kart-backend.onrender.com/user/register',
+        const res = axios.post(
+          'http://localhost:3001/user/register',
           values
         );
         if (res.status === 201 || res.status === 200) {

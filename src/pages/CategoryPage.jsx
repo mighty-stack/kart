@@ -10,7 +10,7 @@ const CategoryPage = () => {
   useEffect(() => {
     setLoading(true);
 
-    // fetch products by category from backend
+    
     axios(`https://kart-backend.onrender.com/products/category/${categoryName}`)
       .then((res) => res.data)
       .then((data) => {
@@ -22,6 +22,8 @@ const CategoryPage = () => {
         setLoading(false);
       });
   }, [categoryName]);
+
+  const fallbackImg = "https://via.placeholder.com/300x200?text=No+Image";
 
   if (loading) return <p>Loading products...</p>;
 
@@ -47,7 +49,13 @@ const CategoryPage = () => {
             <div className="col-md-4 col-lg-3 mb-4" key={product.id}>
               <Link to={`/product/${product.id}`} className="text-decoration-none text-dark">
                 <div className="card h-100 shadow-sm">
-                  {/* <img src={product.image} className="card-img-top" alt={product.name} /> */}
+                  <img
+                    src={product.image || fallbackImg}
+                    className="card-img-top"
+                    alt={product.name}
+                    style={{ objectFit: 'cover', height: '200px' }}
+                    onError={e => { e.target.onerror = null; e.target.src = fallbackImg; }}
+                  />
                   <div className="card-body d-flex flex-column">
                     <h5 className="card-title">{product.name}</h5>
                     <p className="card-text mb-4">₦{product.price}</p>
@@ -61,6 +69,7 @@ const CategoryPage = () => {
     </div>
   );
 };
+
 
 export default CategoryPage
 

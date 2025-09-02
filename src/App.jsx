@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
+import { Route, Routes, BrowserRouter as Router, Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Signin from './pages/Signin';
@@ -13,7 +13,10 @@ import Dashboard from './pages/Dashboard';
 import Checkout from './pages/Checkout';
 import ProductDescriptionPage from './pages/ProductDescriptionPage';
 
-const token = localStorage.getItem('token');
+const PrivateRoute = ({ children }) => {
+  const token = localStorage.getItem('token');
+  return token ? children : <Navigate to="/signin" />;
+}
 
 const App = () => {
 
@@ -33,8 +36,8 @@ const App = () => {
                 <Route path="/signup" element={<Signup/>}/>
                 <Route path="/category/:categoryName" element={<CategoryPage />} />
                 <Route path="/cart" element={<Cart />} />
-                <Route path="/dashboard" element={ token ? <Dashboard token={token}/> : <Signin/> } />
-                <Route path="/checkout" element={<Checkout />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
                 <Route path="/product/:productId" element={<ProductDescriptionPage />} />
                 <Route path="*" element={<NotFound/>}/>
               </Routes>
