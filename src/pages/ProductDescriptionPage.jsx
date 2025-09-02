@@ -11,7 +11,7 @@ const ProductDescriptionPage = () => {
     name: `Product ${productId}`,
     price: 2000,
     description: 'This is a detailed description of the product.',
-    image: '', // Replace with real image URL if available
+    image: '', 
   };
 
   const fallbackImg = "https://via.placeholder.com/400x250?text=No+Image";

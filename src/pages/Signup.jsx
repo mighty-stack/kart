@@ -182,7 +182,7 @@ const Signup = () => {
       setLoading(true);
       try {
         const res = axios.post(
-          'http://localhost:3001/user/register',
+          'https://kart-backend.onrender.com/user/register',
           values
         );
         if (res.status === 201 || res.status === 200) {
