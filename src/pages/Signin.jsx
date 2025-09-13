@@ -5,11 +5,11 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Signin = () => {
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-  const navigate = useNavigate();
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const navigate = useNavigate()
 
   const validationSchema = yup.object({
     email: yup
@@ -20,7 +20,7 @@ const Signin = () => {
       .string()
       .required('Password is required')
       .min(8, 'Password must be at least 6 characters'),
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -29,8 +29,8 @@ const Signin = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      setError('');
-      setLoading(true);
+      setError('')
+      setLoading(true)
 
       fetchProducts()
         .then(() => {
@@ -43,62 +43,62 @@ const Signin = () => {
                 'Content-Type': 'application/json',
               },
             }
-          );
+          )
         })
         .then((response) => {
           if (response.data.success) {
-            const token = response.data.token;
-            const user = response.data.user;
+            const token = response.data.token
+            const user = response.data.user
 
             if (rememberMe) {
-              localStorage.setItem('token', token);
-              localStorage.setItem('user', JSON.stringify(user));
+              localStorage.setItem('token', token)
+              localStorage.setItem('user', JSON.stringify(user))
             } else {
-              sessionStorage.setItem('token', token);
-              sessionStorage.setItem('user', JSON.stringify(user));
+              sessionStorage.setItem('token', token)
+              sessionStorage.setItem('user', JSON.stringify(user))
             }
 
-            console.log('Signin successful, token stored.');
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            navigate('/dashboard');
+            console.log('Signin successful, token stored.')
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+            navigate('/dashboard')
           } else {
-            setError(response.data.message || 'Signin failed');
+            setError(response.data.message || 'Signin failed')
           }
         })
         .catch((err) => {
-          console.error('Signin error:', err);
+          console.error('Signin error:', err)
 
           if (err.code === 'ECONNABORTED') {
-            setError('Request timed out. Please try again.');
+            setError('Request timed out. Please try again.')
           } else if (err.response) {
             if (err.response.status === 404) {
-              setError('Signin endpoint not found. Please check your backend route.');
+              setError('Signin endpoint not found. Please check your backend route.')
             } else if (err.response.status === 401) {
-              setError('Invalid email or password.');
+              setError('Invalid email or password.')
             } else if (err.response.status === 403) {
-              setError('Account is not verified or suspended.');
+              setError('Account is not verified or suspended.')
             } else {
               const message =
                 err.response.data?.message ||
                 err.response.data?.error ||
-                `Signin failed (${err.response.status})`;
-              setError(message);
+                `Signin failed (${err.response.status})`
+              setError(message)
             }
           } else if (err.request) {
-            setError('Network error. Please check your connection and try again.');
+            setError('Network error. Please check your connection and try again.')
           } else {
-            setError('An unexpected error occurred. Please try again.');
+            setError('An unexpected error occurred. Please try again.')
           }
         })
         .finally(() => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     },
-  });
+  })
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+    setShowPassword(!showPassword)
+  }
 
   return (
     <div className="container mt-5 mb-5">
@@ -152,13 +152,6 @@ const Signin = () => {
                       placeholder="Enter your password"
                       {...formik.getFieldProps('password')}
                     />
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary"
-                      onClick={togglePasswordVisibility}
-                    >
-                      {showPassword ? '👁️' : '👁️‍🗨️'}
-                    </button>
                   </div>
                   {formik.touched.password && formik.errors.password && (
                     <div className="invalid-feedback d-block">
@@ -232,7 +225,7 @@ const Signin = () => {
         </div>
       </div>
     </div>
-  );
+  )
 };
 
 export default Signin;

@@ -5,11 +5,11 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Signup = () => {
-  const [serverError, setServerError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
+  const [serverError, setServerError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const navigate = useNavigate()
 
   const validationSchema = yup.object({
     firstname: yup
@@ -40,7 +40,7 @@ const Signup = () => {
       .string()
       .required('Please confirm your password')
       .oneOf([yup.ref('password')], 'Passwords must match'),
-  });
+  })
 
   const formik = useFormik({
     initialValues: {
@@ -52,11 +52,11 @@ const Signup = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      setServerError('');
-      setSuccessMessage('');
-      setLoading(true);
+      setServerError('')
+      setSuccessMessage('')
+      setLoading(true)
 
-      const { confirmPassword, ...submitData } = values;
+      const { confirmPassword, ...submitData } = values
 
       axios
         .post('https://kart-backend.onrender.com/user/register', submitData, {
@@ -65,45 +65,45 @@ const Signup = () => {
         })
         .then((res) => {
           if (res.status === 201 || res.status === 200) {
-            setSuccessMessage('Account created successfully! Redirecting...');
+            setSuccessMessage('Account created successfully! Redirecting...')
 
             if (res.data.token) {
-              localStorage.setItem('token', res.data.token);
+              localStorage.setItem('token', res.data.token)
             }
 
             setTimeout(() => {
-              navigate('/dashboard');
-            }, 1500);
+              navigate('/dashboard')
+            }, 1500)
           } else {
-            setServerError('Signup failed. Please try again.');
+            setServerError('Signup failed. Please try again.')
           }
         })
         .catch((err) => {
           if (err.code === 'ECONNABORTED') {
-            setServerError('Request timed out. Please try again.');
+            setServerError('Request timed out. Please try again.')
           } else if (err.response) {
             const message =
               err.response.data?.message ||
               err.response.data?.error ||
-              `Signup failed (${err.response.status})`;
-            setServerError(message);
+              `Signup failed (${err.response.status})`
+            setServerError(message)
           } else if (err.request) {
             setServerError(
               'Network error. Please check your connection and try again.'
-            );
+            )
           } else {
-            setServerError('An unexpected error occurred. Please try again.');
+            setServerError('An unexpected error occurred. Please try again.')
           }
         })
         .finally(() => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     },
-  });
+  })
 
   const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+    setShowPassword(!showPassword)
+  }
 
   return (
     <div className="container mt-5 mb-5">
@@ -205,13 +205,6 @@ const Signup = () => {
                       placeholder="Enter your password"
                       {...formik.getFieldProps('password')}
                     />
-                    <button
-                      type="button"
-                      className="btn btn-outline-secondary"
-                      onClick={togglePasswordVisibility}
-                    >
-                      {showPassword ? '👁️' : '👁️‍🗨️'}
-                    </button>
                   </div>
                   {formik.touched.password && formik.errors.password && (
                     <div className="invalid-feedback d-block">
@@ -289,7 +282,7 @@ const Signup = () => {
         </div>
       </div>
     </div>
-  );
+  )
 };
 
 export default Signup;

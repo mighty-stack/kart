@@ -12,6 +12,7 @@ import Cart from './pages/Cart';
 import Dashboard from './pages/Dashboard';
 import Checkout from './pages/Checkout';
 import ProductDescriptionPage from './pages/ProductDescriptionPage';
+import '../src/index.css';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
