@@ -32,8 +32,7 @@ const Signin = () => {
       setError('')
       setLoading(true)
 
-      fetchProducts()
-        .then(() => {
+    
           return axios.post(
             'https://kart-backend.onrender.com/user/signin',
             values,
@@ -44,7 +43,6 @@ const Signin = () => {
               },
             }
           )
-        })
         .then((response) => {
           if (response.data.success) {
             const token = response.data.token
