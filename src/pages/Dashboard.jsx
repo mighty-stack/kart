@@ -16,55 +16,56 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  
 
-  const navigate = useNavigate();
-  const productsPerPage = 12;
+  const navigate = useNavigate()
+  const productsPerPage = 12
 
   const getAuthToken = useCallback(() => {
-    return localStorage.getItem("token") || sessionStorage.getItem("token");
-  }, []);
+    return localStorage.getItem("token") || sessionStorage.getItem("token")
+  }, [])
 
   const checkAuth = useCallback(() => {
-    const token = getAuthToken();
+    const token = getAuthToken()
     if (!token) {
-      navigate("/signin");
-      return false;
+      navigate("/signin")
+      return false
     }
-    return true;
-  }, [getAuthToken, navigate]);
+    return true
+  }, [getAuthToken, navigate])
 
   useEffect(() => {
-    if (!checkAuth()) return;
+    if (!checkAuth()) return
 
     const loadUserData = () => {
       const userString =
-        localStorage.getItem("user") || sessionStorage.getItem("user");
+        localStorage.getItem("user") || sessionStorage.getItem("user")
       if (userString) {
-        const user = JSON.parse(userString);
-        setCustomer(user);
+        const user = JSON.parse(userString)
+        setCustomer(user)
       }
 
       try {
-        const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-        const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-        setCartCount(cart.length);
-        setWishlistCount(wishlist.length);
+        const cart = JSON.parse(localStorage.getItem("cart") || "[]")
+        const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]")
+        setCartCount(cart.length)
+        setWishlistCount(wishlist.length)
       } catch (err) {
-        console.error("Error loading user data:", err);
-        setCustomer({ firstname: "Customer" });
+        console.error("Error loading user data:", err)
+        setCustomer({ firstname: "Customer" })
       }
-    };
+    }
 
-    loadUserData();
-  }, [checkAuth]);
+    loadUserData()
+  }, [checkAuth])
 
   const fetchProducts = useCallback(() => {
-    if (!checkAuth()) return;
+    if (!checkAuth()) return
 
-    setLoading(true);
-    setError(null);
+    setLoading(true)
+    setError(null)
 
-    const token = getAuthToken();
+    const token = getAuthToken()
     axios
       .get("https://kart-backend.onrender.com/products", {
         headers: {
@@ -78,42 +79,42 @@ const Dashboard = () => {
         if (response.data) {
           const productsData = Array.isArray(response.data)
             ? response.data
-            : [];
-          setProducts(productsData);
+            : []
+          setProducts(productsData)
         } else {
-          setProducts([]);
+          setProducts([])
         }
       })
       .catch((err) => {
-        console.error("Error fetching products:", err);
+        console.error("Error fetching products:", err)
 
         if (err.response?.status === 401) {
-          localStorage.removeItem("token");
-          sessionStorage.removeItem("token");
-          navigate("/signin");
-          return;
+          localStorage.removeItem("token")
+          sessionStorage.removeItem("token")
+          navigate("/signin")
+          return
         }
 
         if (err.code === "ECONNABORTED") {
           setError(
             "Request timed out. Please check your connection and try again."
-          );
+          )
         } else if (err.response) {
-          setError(`Failed to load products (${err.response.status})`);
+          setError(`Failed to load products (${err.response.status})`)
         } else if (err.request) {
-          setError("Network error. Please check your connection.");
+          setError("Network error. Please check your connection.")
         } else {
-          setError("An unexpected error occurred while loading products.");
+          setError("An unexpected error occurred while loading products.")
         }
       })
       .finally(() => {
-        setLoading(false);
-      });
-  }, [checkAuth, getAuthToken, navigate]);
+        setLoading(false)
+      })
+  }, [checkAuth, getAuthToken, navigate])
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    fetchProducts()
+  }, [fetchProducts])
 
   const filteredAndSortedProducts = React.useMemo(() => {
     let filtered = products.filter((product) => {
@@ -123,54 +124,67 @@ const Dashboard = () => {
           .includes(searchTerm.toLowerCase()) ||
         (product.description || "")
           .toLowerCase()
-          .includes(searchTerm.toLowerCase());
+          .includes(searchTerm.toLowerCase())
       const matchesCategory =
-        selectedCategory === "all" || product.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
+        selectedCategory === "all" || product.category === selectedCategory
+      return matchesSearch && matchesCategory
+    })
 
     filtered.sort((a, b) => {
       switch (sortBy) {
         case "price_low":
-          return (a.price || 0) - (b.price || 0);
+          return (a.price || 0) - (b.price || 0)
         case "price_high":
-          return (b.price || 0) - (a.price || 0);
+          return (b.price || 0) - (a.price || 0)
         case "rating":
-          return (b.rating?.rate || 0) - (a.rating?.rate || 0);
+          return (b.rating?.rate || 0) - (a.rating?.rate || 0)
         case "name":
         default:
           return (a.title || a.name || "").localeCompare(
             b.title || b.name || ""
-          );
+          )
       }
-    });
+    })
 
-    return filtered;
-  }, [products, searchTerm, selectedCategory, sortBy]);
+    return filtered
+  }, [products, searchTerm, selectedCategory, sortBy])
 
   const totalPages = Math.ceil(
     filteredAndSortedProducts.length / productsPerPage
-  );
+  )
   const currentProducts = filteredAndSortedProducts.slice(
     (currentPage - 1) * productsPerPage,
     currentPage * productsPerPage
-  );
+  )
 
   const categories = React.useMemo(() => {
     const cats = [
       "all",
       ...new Set(products.map((product) => product.category).filter(Boolean)),
-    ];
-    return cats;
-  }, [products]);
+    ]
+    return cats
+  }, [products])
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    sessionStorage.removeItem("token")
+    sessionStorage.removeItem("user")
+    navigate("/signin")
+  }
+
+  useEffect(() => {
+  const savedUser =
+    localStorage.getItem("user") || sessionStorage.getItem("user");
+
+  if (savedUser) {
+    setCustomer(JSON.parse(savedUser));
+  } else {
     navigate("/signin");
-  };
+  }
+  setLoading(false);
+}, [navigate]);
+
 
   if (loading) {
     return (
@@ -187,15 +201,9 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user")) || {
-      firstname: "Customer",
-    };
-    setCustomer(user);
-  }, []);
 
   return (
     <div className="dashboard-container">
@@ -261,8 +269,8 @@ const Dashboard = () => {
                   placeholder="Search by name or description..."
                   value={searchTerm}
                   onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
+                    setSearchTerm(e.target.value)
+                    setCurrentPage(1)
                   }}
                 />
               </div>
@@ -273,8 +281,8 @@ const Dashboard = () => {
                 className="form-select"
                 value={selectedCategory}
                 onChange={(e) => {
-                  setSelectedCategory(e.target.value);
-                  setCurrentPage(1);
+                  setSelectedCategory(e.target.value)
+                  setCurrentPage(1)
                 }}
               >
                 {categories.map((category) => (
@@ -353,9 +361,9 @@ const Dashboard = () => {
                 {(searchTerm || selectedCategory !== "all") && (
                   <button
                     onClick={() => {
-                      setSearchTerm("");
-                      setSelectedCategory("all");
-                      setCurrentPage(1);
+                      setSearchTerm("")
+                      setSelectedCategory("all")
+                      setCurrentPage(1)
                     }}
                     className="btn btn-outline-primary"
                   >
@@ -370,8 +378,9 @@ const Dashboard = () => {
                     {currentProducts.map((product) => (
                       <div
                         className="col-12 col-sm-6 col-md-4 col-lg-3"
-                        key={product.id}
+                        key={product._id || product.id || index}
                       >
+ 
                         <div className="product-card card h-100 shadow-sm border-0">
                           <div className="position-relative">
                             <img
@@ -380,8 +389,8 @@ const Dashboard = () => {
                               alt={product.title || product.name}
                               style={{ objectFit: "cover", height: "200px" }}
                               onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = fallbackImg;
+                                e.target.onerror = null
+                                e.target.src = fallbackImg
                               }}
                             />
                             {product.rating && (
@@ -421,8 +430,9 @@ const Dashboard = () => {
                             <div className="mt-auto">
                               <div className="d-grid gap-2">
                                 <Link
-                                  to={`/product/${product.id}`}
-                                  className="btn btn-outline-primary btn-sm"
+                                to={`/product/${product._id || product.id}`}
+                                state={{ product }} 
+                                className="btn btn-outline-primary btn-sm"
                                 >
                                   View Details
                                 </Link>
@@ -458,7 +468,7 @@ const Dashboard = () => {
                         </li>
 
                         {[...Array(totalPages)].map((_, index) => {
-                          const page = index + 1;
+                          const page = index + 1
                           if (
                             page === 1 ||
                             page === totalPages ||
@@ -478,7 +488,7 @@ const Dashboard = () => {
                                   {page}
                                 </button>
                               </li>
-                            );
+                            )
                           } else if (
                             page === currentPage - 3 ||
                             page === currentPage + 3
@@ -487,9 +497,9 @@ const Dashboard = () => {
                               <li key={page} className="page-item disabled">
                                 <span className="page-link">...</span>
                               </li>
-                            );
+                            )
                           }
-                          return null;
+                          return null
                         })}
 
                         <li
@@ -515,7 +525,7 @@ const Dashboard = () => {
         )}
       </div>
     </div>
-  );
+  )
 };
 
 export default Dashboard;

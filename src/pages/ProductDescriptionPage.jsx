@@ -6,101 +6,96 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import ErrorMessage from "../components/ErrorMessage";
 
 const ProductDescriptionPage = () => {
-  const { productId } = useParams()
-  const navigate = useNavigate()
+  const { productId } = useParams();
+  const navigate = useNavigate();
 
-  const [product, setProduct] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [quantity, setQuantity] = useState(1)
-  const [relatedProducts, setRelatedProducts] = useState([])
-  const [imageLoading, setImageLoading] = useState(true)
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [imageLoading, setImageLoading] = useState(true);
 
+  const fallbackImg = "https://via.placeholder.com/400x250?text=No+Image";
+
+  //  Fetch single product
   useEffect(() => {
-    const fetchProduct = () => {
-      if (productId) {
-        setError("Product ID is required")
-        setLoading(false)
-        return
+    const fetchProduct = async () => {
+      if (!productId) {
+        setError("Product ID is required");
+        setLoading(false);
+        return;
       }
 
-      fetchProducts()
-        .then(() => {
-          setLoading(true)
-          setError(null)
+      try {
+        setLoading(true);
+        setError(null);
 
-          const response = axios.get(
-            `https://fakestoreapi.com/products/${productId}`
-          )
-          setProduct(response.data)
+        const response = await axios.get(
+          `https://kart-backend.onrender.com/products/${productId}`
+        );
 
-          if (response.data) {
-            setProduct(response.data)
-            fetchRelatedProducts(response.data.category)
-          } else {
-            setError("Product not found")
-            navigate("/not-found")
-          }
-        })
-        .catch((err) => {
-          console.error("Error fetching product:", err)
-          if (err.response?.status === 404) {
-            setError("Product not found")
-          } else if (err.code === "ECONNABORTED") {
-            setError("Request timed out. Please try again.")
-          } else {
-            setError("Failed to load product. Please try again.")
-          }
-        })
-        .finally(() => {
-          setLoading(false)
-        })
-    }
+        setProduct(response.data);
 
-    fetchProduct()
-  }, [productId])
-
-  const fallbackImg = "https://via.placeholder.com/400x250?text=No+Image"
-
-  const fetchRelatedProducts = (category) => {
-    fetchRelatedProducts()
-      .then(() => {
-        const response = axios.get(
-          `https://fakestoreapi.com/products/category/${category}`,
-          {
-            timeout: 5000,
-          }
-        )
-
-        if (response.data) {
-          const filtered = response.data
-            .filter((item) => item.id.toString() !== productId)
-            .slice(0, 4)
-          setRelatedProducts(filtered)
+        if (response.data?.category) {
+          fetchRelatedProducts(response.data.category);
+        } else {
+          setError("Product not found");
+          navigate("/not-found");
         }
-      })
-      .catch((err) => {
-        console.log("Could not fetch related products:", err)
-      })
-  }
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        if (err.response?.status === 404) {
+          setError("Product not found");
+          navigate("/not-found");
+        } else if (err.code === "ECONNABORTED") {
+          setError("Request timed out. Please try again.");
+        } else {
+          setError("Failed to load product. Please try again.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
-   const quantityChange = (newQuantity) => {
-    if (newQuantity >= 1 && newQuantity <= 10) {
-      setQuantity(newQuantity)
+    fetchProduct();
+  }, [productId]);
+
+  //  Fetch related products
+  const fetchRelatedProducts = async (category) => {
+    try {
+      const response = await axios.get(
+        `https://kart-backend.onrender.com/products/category/${categoryName}`,
+        { timeout: 5000 }
+      );
+
+      const filtered = response.data
+        .filter((item) => item.id.toString() !== productId)
+        .slice(0, 4);
+
+      setRelatedProducts(filtered);
+    } catch (err) {
+      console.error("Could not fetch related products:", err);
     }
-  }
+  };
 
-  const imageLoad = () => {
-    setImageLoading(false)
-  }
+  // Quantity control
+  const quantityChange = (newQuantity) => {
+    if (newQuantity >= 1 && newQuantity <= 10) {
+      setQuantity(newQuantity);
+    }
+  };
 
+  // Image handlers
+  const imageLoad = () => setImageLoading(false);
   const imageError = (e) => {
-    e.target.onerror = null
-    e.target.src = fallbackImg
-    setImageLoading(false)
-  }
+    e.target.onerror = null;
+    e.target.src = fallbackImg;
+    setImageLoading(false);
+  };
 
+  // Loading state
   if (loading) {
     return (
       <div className="container mt-5">
@@ -111,9 +106,10 @@ const ProductDescriptionPage = () => {
           <LoadingSpinner />
         </div>
       </div>
-    )
+    );
   }
 
+  // Error state
   if (error) {
     return (
       <div className="container mt-5">
@@ -134,33 +130,30 @@ const ProductDescriptionPage = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  if (product) {
+  //  Product not found
+  if (!product) {
     return (
-      <div className="container mt-5">
-        <div className="text-center">
-          <h3>Product Not Found</h3>
-          <p>The product you're looking for doesn't exist.</p>
-          <Link to="/" className="btn btn-primary">
-            Continue Shopping
-          </Link>
-        </div>
+      <div className="container mt-5 text-center">
+        <h3>Product Not Found</h3>
+        <Link to="/" className="btn btn-primary mt-3">
+          Continue Shopping
+        </Link>
       </div>
-    )
+    );
   }
 
+  //  Images setup
   const images =
     product.images && product.images.length > 0
       ? product.images
-      : [product.image]
-  if (images.length === 0) {
-    images.push(fallbackImg)
-  }
+      : [product.image || fallbackImg];
 
   return (
-    <div className="container mt-4 mb-5">
+    <div className="container-fluid px-3 px-md-5 mt-4 mb-5">
+      {/* Breadcrumb */}
       <nav aria-label="breadcrumb" className="mb-4">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
@@ -182,20 +175,19 @@ const ProductDescriptionPage = () => {
         </ol>
       </nav>
 
+      {/* Product Details */}
       <div className="row">
-        <div className="col-lg-6 mb-4">
+        {/* Left: Images */}
+        <div className="col-lg-6 col-md-6 col-sm-12 mb-4">
           <div className="product-images">
             <div className="main-image mb-3 position-relative">
               {imageLoading && (
                 <div className="position-absolute w-100 h-100 d-flex justify-content-center align-items-center bg-light">
-                  <div
-                    className="spinner-border text-primary"
-                    role="status"
-                  ></div>
+                  <div className="spinner-border text-primary" role="status"></div>
                 </div>
               )}
               <img
-                src={images[selectedImage] || fallbackImg}
+                src={images[selectedImage]}
                 className="img-fluid rounded shadow"
                 alt={product.title || product.name}
                 style={{
@@ -206,8 +198,6 @@ const ProductDescriptionPage = () => {
                 }}
                 onLoad={imageLoad}
                 onError={imageError}
-                onClick={() => {
-                }}
               />
             </div>
 
@@ -216,7 +206,7 @@ const ProductDescriptionPage = () => {
                 {images.map((img, index) => (
                   <img
                     key={index}
-                    src={img || fallbackImg}
+                    src={img}
                     className={`img-thumbnail ${
                       selectedImage === index ? "border-primary" : ""
                     }`}
@@ -236,11 +226,10 @@ const ProductDescriptionPage = () => {
           </div>
         </div>
 
-        <div className="col-lg-6">
+        {/* Right: Details */}
+        <div className="col-lg-6 col-md-6 col-sm-12">
           <div className="product-details">
-            <h1 className="product-title h2 mb-3">
-              {product.title || product.name}
-            </h1>
+            <h1 className="product-title h3 mb-3">{product.title}</h1>
 
             {product.rating && (
               <div className="rating mb-3">
@@ -273,22 +262,6 @@ const ProductDescriptionPage = () => {
               <h3 className="text-success mb-0">
                 ₦{product.price?.toLocaleString() || "N/A"}
               </h3>
-              {product.originalPrice &&
-                product.originalPrice > product.price && (
-                  <div className="mt-1">
-                    <span className="text-muted text-decoration-line-through me-2">
-                      ₦{product.originalPrice.toLocaleString()}
-                    </span>
-                    <span className="badge bg-danger">
-                      {Math.round(
-                        ((product.originalPrice - product.price) /
-                          product.originalPrice) *
-                          100
-                      )}
-                      % OFF
-                    </span>
-                  </div>
-                )}
             </div>
 
             <div className="category mb-3">
@@ -333,7 +306,9 @@ const ProductDescriptionPage = () => {
                   +
                 </button>
               </div>
-              <small className="text-muted">Maximum 10 items per order</small>
+              <small className="text-muted">
+                Maximum 10 items per order
+              </small>
             </div>
 
             <div className="action-buttons mb-4">
@@ -353,22 +328,16 @@ const ProductDescriptionPage = () => {
             <div className="additional-info">
               <div className="row text-center">
                 <div className="col-4">
-                  <div className="info-item">
-                    <i className="bi bi-truck display-6 text-primary"></i>
-                    <p className="small mb-0 mt-2">Free Delivery</p>
-                  </div>
+                  <i className="bi bi-truck display-6 text-primary"></i>
+                  <p className="small mb-0 mt-2">Free Delivery</p>
                 </div>
                 <div className="col-4">
-                  <div className="info-item">
-                    <i className="bi bi-arrow-repeat display-6 text-primary"></i>
-                    <p className="small mb-0 mt-2">Easy Returns</p>
-                  </div>
+                  <i className="bi bi-arrow-repeat display-6 text-primary"></i>
+                  <p className="small mb-0 mt-2">Easy Returns</p>
                 </div>
                 <div className="col-4">
-                  <div className="info-item">
-                    <i className="bi bi-shield-check display-6 text-primary"></i>
-                    <p className="small mb-0 mt-2">Secure Payment</p>
-                  </div>
+                  <i className="bi bi-shield-check display-6 text-primary"></i>
+                  <p className="small mb-0 mt-2">Secure Payment</p>
                 </div>
               </div>
             </div>
@@ -376,17 +345,21 @@ const ProductDescriptionPage = () => {
         </div>
       </div>
 
+      {/* Related Products */}
       {relatedProducts.length > 0 && (
         <div className="related-products mt-5">
           <hr />
           <h4 className="mb-4">Related Products</h4>
           <div className="row">
             {relatedProducts.map((relatedProduct) => (
-              <div key={relatedProduct.id} className="col-md-3 col-sm-6 mb-3">
+              <div
+                key={relatedProduct.id}
+                className="col-lg-3 col-md-4 col-sm-6 mb-3"
+              >
                 <div className="card h-100 shadow-sm">
                   <img
                     src={relatedProduct.image || fallbackImg}
-                    className="card-img-top"
+                    className="card-img-top img-fluid"
                     alt={relatedProduct.title}
                     style={{ height: "200px", objectFit: "cover" }}
                     onError={imageError}
@@ -410,7 +383,7 @@ const ProductDescriptionPage = () => {
         </div>
       )}
     </div>
-  )
+  );
 };
 
 export default ProductDescriptionPage;
