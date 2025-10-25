@@ -35,7 +35,7 @@ const Navbar = () => {
     <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
       <div className="container">
         {/* Left: Brand and Nav links */}
-        <Link className="navbar-brand fw-bold" to="/">Kart</Link>
+        <Link className="navbar-brand fw-bold" to="/"><img src="/favicon.png" alt="Kart Logo"  width="100" height="100"/></Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -47,12 +47,6 @@ const Navbar = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className={`collapse navbar-collapse${navOpen ? ' show' : ''}`} id="navbarMain">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/">Home</NavLink>
-            </li>
-            {/* ...existing code for more links... */}
-          </ul>
           {/* Center: Search */}
           <form className="d-flex mx-auto" style={{ maxWidth: 400, width: '100%' }}>
             <input className="form-control me-2" type="search" placeholder="Search products..." aria-label="Search" />

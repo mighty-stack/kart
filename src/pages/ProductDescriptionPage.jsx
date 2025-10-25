@@ -17,7 +17,7 @@ const ProductDescriptionPage = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [imageLoading, setImageLoading] = useState(true);
 
-  const fallbackImg = "https://via.placeholder.com/400x250?text=No+Image";
+  const fallbackImg = "https://placehold.co/400x250?text=No+Image";
 
   //  Fetch single product
   useEffect(() => {
@@ -66,7 +66,7 @@ const ProductDescriptionPage = () => {
   const fetchRelatedProducts = async (category) => {
     try {
       const response = await axios.get(
-        `https://kart-backend.onrender.com/products/category/${categoryName}`,
+        `http://localhost:3001/products/category/${encodeURIComponent(category)}`,
         { timeout: 5000 }
       );
 

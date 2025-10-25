@@ -1,37 +1,46 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Checkout = () => {
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handlePayment = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
+    if (!email || !amount) {
+      alert("Please enter your email and amount");
+      return;
+    }
+
     setLoading(true);
-    axios
-      .post("http://localhost:5000/api/payment/initialize", {
-        email,
-        amount,
-      })
-      .then((res) => {
-        setLoading(false);
-        if (res.data.success) {
-          const { authorization_url } = res.data.data;
-          // Redirect user to Paystack checkout
-          navigate(authorization_url);
-        } else {
-          alert("Payment initialization failed!");
+
+    try {
+      // Convert to kobo (Paystack expects amount in the smallest currency unit)
+      const response = await axios.post(
+        "https://kart-backend.onrender.com/payment/initialize",
+        {
+          email,
+          amount: Number(amount) * 100,
         }
-      })
-      .catch((error) => {
-        setLoading(false);
-        console.error("Payment Error:", error);
-        alert("Something went wrong!");
-      });
+      );
+
+      setLoading(false);
+
+      if (response.data.success) {
+        const { authorization_url } = response.data.data;
+        // Redirect user to Paystack checkout page
+        window.location.href = authorization_url;
+      } else {
+        alert(response.data.error || "Payment initialization failed!");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Payment Error:", error);
+      alert(
+        error.response?.data?.error || "Something went wrong during payment!"
+      );
+    }
   };
 
   return (
@@ -42,15 +51,7 @@ const Checkout = () => {
             <div className="card-body">
               <h3 className="card-title mb-4 text-center">Checkout</h3>
               <form onSubmit={handlePayment}>
-                <div className="mb-3">
-                  <label className="form-label">Full Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </div>
+                {" "}
                 <div className="mb-3">
                   <label className="form-label">Email Address</label>
                   <input
@@ -60,37 +61,25 @@ const Checkout = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                  />
+                  />{" "}
                 </div>
                 <div className="mb-3">
-                  <label className="form-label">Shipping Address</label>
+                  <label className="form-label">Amount (₦)</label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
-                    placeholder="Enter your address"
+                    placeholder="Enter amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
                     required
                   />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Phone Number</label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    placeholder="Enter your phone number"
-                    required
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="form-label">Payment Method</label>
-                  <select className="form-select" required>
-                    <option value="">Select payment method</option>
-                    <option value="card">Credit/Debit Card</option>
-                    <option value="transfer">Bank Transfer</option>
-                    <option value="cod">Cash on Delivery</option>
-                  </select>
                 </div>
                 <div className="d-grid">
-                  <button type="submit" className="btn btn-success" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="btn btn-success"
+                    disabled={loading}
+                  >
                     {loading ? "Processing..." : "Proceed to Payment"}
                   </button>
                 </div>
